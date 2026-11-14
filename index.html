@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Chardee MacDennis — The JNT War</title>
+<title>Janty — The Game of Games</title>
 <style>
   :root{
     --bg:#130b08; --panel:#1f1512; --panel2:#291b16; --line:#3d2a22;
@@ -141,7 +141,7 @@
 <div class="topbar">
   <div class="flame"></div>
   <div class="inner">
-    <div class="brand">Chardee MacDennis<small>The JNT War</small></div>
+    <div class="brand">Janty<small>The Game of Games</small></div>
     <div class="spacer"></div>
     <div id="clock" class="clock" hidden>15:00</div>
     <button class="btn ghost small" data-action="open-rules">Rules</button>
@@ -161,18 +161,18 @@ var AVATARS = ["🐺","🦊","🐻","🦁","🐯","🐸","🐙","🦉","🐢","�
 
 var DECKS = {
   1: [
-    {t:"trivia", scope:"solo", q:"What is the greatest band in the world?", a:"Chumbawamba. (Yes, really. That is the official answer. The game is more of a memory test than a trivia test.)"},
-    {t:"trivia", scope:"solo", q:"Which Philly celebrity would you most want to have a drink with?", a:"Bill Cosby is the official card answer — but honestly, any answer the group agrees on counts. Group decides."},
-    {t:"trivia", scope:"solo", q:"How many games of Chardee MacDennis had Mac and Charlie won before the show?", a:"Zero. 18 games, zero wins. Statistically improbable, but there it is."},
+    {t:"trivia", scope:"solo", q:"What is the greatest movie of all time? The group votes — majority rules. A tie means everyone drinks.", a:"Whatever the group agrees on. If you can't agree, everyone drinks."},
+    {t:"trivia", scope:"solo", q:"Name each player's go-to karaoke song. The player confirms if you're right — get them all to earn the card.", a:"The player confirms. Any wrong guess costs a sip."},
+    {t:"trivia", scope:"solo", q:"General knowledge: what is the only mammal capable of true flight?", a:"A bat."},
     {t:"trivia", scope:"solo", q:"Finish the lyric: 'I get knocked down, but I get up again...'", a:"'You are never gonna keep me down.'"},
-    {t:"trivia", scope:"solo", q:"What are the three levels of Chardee MacDennis, in order?", a:"Mind, Body, Spirit."},
-    {t:"trivia", scope:"solo", q:"What is the prize for winning Chardee MacDennis?", a:"You get to smash the losing team's game pieces."},
-    {t:"trivia", scope:"solo", q:"Who is 'The Golden God'?", a:"Dennis Reynolds."},
-    {t:"trivia", scope:"solo", q:"What decides the game if the clock runs out with no winner?", a:"The Black Card — and it says: flip a coin."},
+    {t:"trivia", scope:"solo", q:"What is the tallest mountain on Earth?", a:"Mount Everest — 8,849 m (29,032 ft)."},
+    {t:"trivia", scope:"solo", q:"How many minutes are in a full day?", a:"1,440."},
+    {t:"trivia", scope:"solo", q:"Which planet is known as the Red Planet?", a:"Mars."},
+    {t:"trivia", scope:"solo", q:"How many strings does a standard guitar have?", a:"Six."},
     {t:"trivia", scope:"solo", q:"Name the three people playing right now, from most to least likely to flip the board in rage.", a:"Group vote decides. Whoever is voted most likely drinks."},
     {t:"trivia", scope:"solo", q:"What did you eat for dinner three nights ago?", a:"If nobody at the fire can confirm your answer, you drink."},
-    {t:"trivia", scope:"solo", q:"Which 'Always Sunny' character ate a whole raw chicken? (bonus: who ate the ingredients of a cake raw?)", a:"Mac ate the raw chicken. Frank ate cake ingredients raw in 'jail'."},
-    {t:"trivia", scope:"solo", q:"Spell 'Chardee MacDennis' out loud, correctly, first try.", a:"C-H-A-R-D-E-E M-A-C-D-E-N-N-I-S."},
+    {t:"trivia", scope:"solo", q:"Group vote: who among you is most likely to survive a zombie apocalypse? The group decides — the player voted least likely drinks.", a:"Group decides."},
+    {t:"trivia", scope:"solo", q:"What is the capital of Australia?", a:"Canberra. (Not Sydney — that's the trap.)"},
     {t:"puzzle", scope:"solo", q:"Riddle: I am tall when I am young and short when I am old. What am I?", a:"A candle. (Very on theme for a firepit.)"},
     {t:"puzzle", scope:"solo", q:"Riddle: The more you take, the more you leave behind. What are they?", a:"Footsteps."},
     {t:"puzzle", scope:"solo", q:"Say the alphabet backwards, out loud, in under 45 seconds.", a:"No answer. Just survive."},
@@ -187,7 +187,7 @@ var DECKS = {
     {t:"artistry", scope:"all", q:"Draw a picture in the air with your finger only. The other two guess.", a:"No answer."},
     {t:"artistry", scope:"all", q:"Hum a song. The other two guess the tune within 30 seconds.", a:"No answer."},
     {t:"artistry", scope:"all", q:"Draw on the back of one opponent with your finger. They must guess by feel alone. If they get it, YOU earn the card.", a:"No answer."},
-    {t:"artistry", scope:"all", q:"Draw the clue using your non-dominant hand. The other two guess.", a:"No answer."},
+    {t:"artistry", scope:"all", q:"Perform a silent, 30-second impression of a famous celebrity. No talking. The other two guess who.", a:"No answer."},
     {t:"chance", scope:"solo", q:"Everyone else takes a sip. You watch, smugly.", a:"", effect:"everyone_else_sips"},
     {t:"chance", scope:"solo", q:"Go to Jail. Sit in the designated 'jail' (a chair or cooler) until your next turn. No phone.", a:"", effect:"jail"},
     {t:"chance", scope:"solo", q:"Swap game pieces (avatars) with the player on your left for the rest of the game.", a:"", effect:"swap"},
@@ -247,7 +247,7 @@ var BLACK_CARDS = [
   {name:"Rock, Paper, Scissors", text:"Single elimination rock-paper-scissors. Last one standing wins the game."},
   {name:"Dance-Off", text:"Sixty-second dance-off. The fire is the only judge. Winner takes it all."},
   {name:"Thumb War Royale", text:"Free-for-all thumb war. Last thumb standing wins the game."},
-  {name:"Silent Bidding", text:"Silently write down an offer (a chore, a drink, a favor). The most tempting offer wins the game."},
+  {name:"Roast Duel", text:"Take turns roasting each other, one line at a time. First to go silent, laugh, or repeat loses. Last one sharp wins the game."},
   {name:"Stare-Down", text:"Last person to look away from the fire wins the game."}
 ];
 
@@ -270,11 +270,11 @@ function defaultConfig(){
 
 function freshState(){
   return {
-    phase:"setup",
+    phase:"intro",
     players:[
-      {id:1, name:"Nancy", avatar:"🦊", team:"", level:0, cards:0, skipNext:false, jail:false, done:false, place:null},
-      {id:2, name:"Tyler", avatar:"🐻", team:"", level:0, cards:0, skipNext:false, jail:false, done:false, place:null},
-      {id:3, name:"Jerod", avatar:"🐺", team:"", level:0, cards:0, skipNext:false, jail:false, done:false, place:null}
+      {id:1, name:"Nancy", avatar:"🦊", team:"", level:0, cards:0, skipNext:false, jail:false, accent:"", timeouts:3, done:false, place:null},
+      {id:2, name:"Tyler", avatar:"🐻", team:"", level:0, cards:0, skipNext:false, jail:false, accent:"", timeouts:3, done:false, place:null},
+      {id:3, name:"Jerod", avatar:"🐺", team:"", level:0, cards:0, skipNext:false, jail:false, accent:"", timeouts:3, done:false, place:null}
     ],
     config:defaultConfig(),
     active:0,
@@ -285,12 +285,15 @@ function freshState(){
     ui:{},
     decks:{1:[],2:[],3:[]},
     finishedOrder:[],
-    timer:{total:0, remaining:0, running:false},
+    timer:{total:0, remaining:0, running:false, endAt:0},
     black:{}
   };
 }
 
-function save(){ try{ localStorage.setItem(STORE, JSON.stringify(S)); }catch(e){} }
+function save(push){
+  try{ localStorage.setItem(STORE, JSON.stringify(S)); }catch(e){}
+  if(push!==false) GunRef.push();
+}
 function load(){ try{ return JSON.parse(localStorage.getItem(STORE)); }catch(e){ return null; } }
 function clearSave(){ try{ localStorage.removeItem(STORE); }catch(e){} }
 
@@ -313,6 +316,165 @@ function beep(freq, dur){
   }catch(e){}
 }
 
+var NOTE_BASE = {C:0,"C#":1,D:2,"D#":3,E:4,F:5,"F#":6,G:7,"G#":8,A:9,"A#":10,B:11};
+function noteFreq(name){
+  var m = /^([A-G]#?)(\d)$/.exec(name);
+  if(!m) return 440;
+  var semi = NOTE_BASE[m[1]] + (parseInt(m[2],10)+1)*12;
+  return 440 * Math.pow(2, (semi-69)/12);
+}
+
+var MELODIES = [
+  {name:"Ode to Joy", tempo:0.42, notes:["E4","E4","F4","G4","G4","F4","E4","D4","C4","C4","D4","E4","E4","D4","D4","D4"]},
+  {name:"Für Elise", tempo:0.27, notes:["E5","D#5","E5","D#5","E5","B4","D5","C5","A4","C4","E4","A4","B4","E4","G#4","B4","C5"]},
+  {name:"Minuet in G", tempo:0.32, notes:["D5","G4","A4","B4","C5","D5","G4","G4","E5","C5","D5","E5","F#5","G5","G4","G4"]},
+  {name:"Eine kleine Nachtmusik", tempo:0.30, notes:["G4","D4","G4","D4","G4","D4","G4","B4","D5","C5","A4","C5","A4","F#4","A4","D5"]}
+];
+
+var Music = {
+  ctx:null, gain:null, playing:false, loop:null, muted:false, current:"",
+  init:function(){
+    if(this.ctx) return;
+    try{
+      this.ctx = new (window.AudioContext||window.webkitAudioContext)();
+      this.gain = this.ctx.createGain();
+      this.gain.gain.value = 0.45;
+      this.gain.connect(this.ctx.destination);
+    }catch(e){ this.ctx = null; }
+  },
+  voice:function(freq, start, dur, vol, type){
+    var ctx = this.ctx, o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type; o.frequency.value = freq; o.connect(g); g.connect(this.gain);
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(vol, start+0.04);
+    g.gain.exponentialRampToValueAtTime(0.0001, start+dur);
+    o.start(start); o.stop(start+dur+0.05);
+  },
+  schedule:function(mel){
+    if(!this.ctx) return;
+    var ctx = this.ctx, t0 = ctx.currentTime + 0.08, t = t0;
+    for(var k=0;k<mel.notes.length;k++){
+      var f = noteFreq(mel.notes[k]);
+      this.voice(f, t, mel.tempo*0.92, 0.16, "triangle");
+      this.voice(f/2, t, mel.tempo*0.92, 0.06, "sine");
+      t += mel.tempo;
+    }
+    var total = t - t0, self = this;
+    this.loop = setTimeout(function(){ if(self.playing) self.schedule(self._mel); }, total*1000 + 300);
+  },
+  start:function(){
+    this.init();
+    if(!this.ctx) return;
+    if(this.ctx.state==="suspended"){ this.ctx.resume(); }
+    this.gain.gain.cancelScheduledValues(this.ctx.currentTime);
+    this.gain.gain.setValueAtTime(0.45, this.ctx.currentTime);
+    this.playing = true;
+    this._mel = MELODIES[Math.floor(Math.random()*MELODIES.length)];
+    this.current = this._mel.name;
+    this.schedule(this._mel);
+  },
+  stop:function(){
+    this.playing = false;
+    if(this.loop){ clearTimeout(this.loop); this.loop = null; }
+    if(this.ctx && this.gain){
+      try{
+        this.gain.gain.cancelScheduledValues(this.ctx.currentTime);
+        this.gain.gain.setValueAtTime(this.gain.gain.value, this.ctx.currentTime);
+        this.gain.gain.linearRampToValueAtTime(0.0001, this.ctx.currentTime+0.15);
+      }catch(e){}
+    }
+  },
+  toggle:function(){
+    if(this.playing){ this.muted = true; this.stop(); }
+    else { this.muted = false; this.start(); }
+  }
+};
+
+function syncMusic(){
+  if(S.phase==="ritual"){
+    if(!Music.playing && !Music.muted) Music.start();
+  } else if(Music.playing){
+    Music.stop();
+  }
+}
+
+/* ---------- multi-device sync (gun.js) ---------- */
+
+var SYNC_STORE = "chardee_sync_v1";
+var GunRef = {
+  gun:null, node:null, last:null, ready:false, status:"off", pending:null,
+  cfg:function(){
+    try{ return JSON.parse(localStorage.getItem(SYNC_STORE)) || {}; }catch(e){ return {}; }
+  },
+  saveCfg:function(c){ try{ localStorage.setItem(SYNC_STORE, JSON.stringify(c)); }catch(e){} },
+  load:function(cb){
+    if(window.Gun) return cb(null);
+    var s = document.createElement("script");
+    s.src = "https://cdn.jsdelivr.net/npm/gun/gun.js";
+    s.onload = function(){ cb(window.Gun ? null : "Gun failed to initialise."); };
+    s.onerror = function(){ cb("Could not load Gun.js — are you online?"); };
+    document.head.appendChild(s);
+  },
+  connect:function(room, relay, cb){
+    var self = this;
+    self.status = "connecting";
+    self.load(function(err){
+      if(err){ self.status = "error"; cb(err); return; }
+      var peers = (relay||"").split(",").map(function(x){return x.trim();}).filter(Boolean);
+      try{
+        self.gun = Gun(peers.length ? {peers:peers} : undefined);
+      }catch(e){ self.status="error"; cb("Could not start Gun."); return; }
+      self.node = self.gun.get("janty-rooms").get(room);
+      self.last = null;
+      self.received = false;
+      self.node.get("state").on(function(data){
+        if(!self.ready) return;
+        if(typeof data !== "string") return;
+        if(data === self.last) return;
+        self.received = true;
+        self.last = data;
+        try{ applyRemote(JSON.parse(data)); }catch(e){}
+      });
+      self.ready = true;
+      self.status = "on";
+      self.saveCfg({room:room, relay:relay});
+      setTimeout(function(){ if(self.ready && !self.received) self.push(true); }, 900);
+      cb(null);
+    });
+  },
+  push:function(force){
+    if(!this.ready || !this.node) return;
+    var json = JSON.stringify(S);
+    if(!force && json === this.last) return;
+    this.last = json;
+    this.node.get("state").put(json);
+  },
+  disconnect:function(){
+    this.ready = false;
+    this.status = "off";
+    try{ if(this.node) this.node.get("state").off(); }catch(e){}
+    this.node = null;
+    this.last = null;
+    this.saveCfg({room:"", relay:""});
+  }
+};
+
+function applyRemote(incoming){
+  if(!incoming || !incoming.phase || !incoming.players) return;
+  S = incoming;
+  if(timerId){ clearInterval(timerId); timerId = null; }
+  render();
+  ensureClock();
+  save(false);
+}
+
+function syncLabel(){
+  if(GunRef.status==="on") return "📡 Synced";
+  if(GunRef.status==="connecting") return "📡 Connecting…";
+  if(GunRef.status==="error") return "📡 Sync error";
+  return "📡 Multi-device sync";
+}
+
 function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
 
 function activePlayer(){ return S.players[S.active]; }
@@ -333,7 +495,8 @@ function render(){
   var footer = byId("footer");
   var clock = byId("clock");
 
-  if(S.phase==="setup"){ root.innerHTML = viewSetup(); footer.hidden = true; clock.hidden = true; }
+  if(S.phase==="intro"){ root.innerHTML = viewIntro(); footer.hidden = true; clock.hidden = true; }
+  else if(S.phase==="setup"){ root.innerHTML = viewSetup(); footer.hidden = true; clock.hidden = true; }
   else if(S.phase==="ritual"){ root.innerHTML = viewRitual(); footer.hidden = true; }
   else if(S.phase==="play"){ root.innerHTML = viewPlay(); footer.hidden = false; renderFooter(); }
   else if(S.phase==="over"){ root.innerHTML = viewOver(); footer.hidden = true; }
@@ -343,6 +506,17 @@ function render(){
 
   renderModal();
   renderClock();
+  syncMusic();
+}
+
+function viewIntro(){
+  return '<div class="card enter center">' +
+      '<div class="badge">Read me first</div>' +
+      '<h1 style="margin-top:10px; font-size:2.3rem">Janty</h1>' +
+      '<div class="muted small" style="letter-spacing:.3em; text-transform:uppercase; margin-top:4px">The Game of Games</div>' +
+      '<p class="muted small" style="margin-top:12px">Before anyone touches a card, read the rules. It is not a game. It is a war. A glass of wine is recommended for the reading.</p>' +
+    '</div>' +
+    viewRules("to-setup", "I have read the rules — set up the game");
 }
 
 function viewSetup(){
@@ -353,14 +527,14 @@ function viewSetup(){
         '<div class="field"><label>Player '+(i+1)+' name</label>' +
         '<input type="text" data-field="name" data-i="'+i+'" value="'+esc(pl.name)+'" maxlength="18" /></div>' +
         '<div class="field"><label>Team name (optional)</label>' +
-        '<input type="text" data-field="team" data-i="'+i+'" value="'+esc(pl.team)+'" maxlength="22" placeholder="e.g. The Golden Geese" /></div>' +
+        '<input type="text" data-field="team" data-i="'+i+'" value="'+esc(pl.team)+'" maxlength="22" placeholder="e.g. The Firepit Syndicate" /></div>' +
       '</div></div>';
   }).join("");
 
   return '<div class="card enter center">' +
-      '<h1 style="font-size:2.1rem">Chardee MacDennis</h1>' +
-      '<div class="muted small" style="letter-spacing:.3em; text-transform:uppercase; margin-top:4px">The JNT War</div>' +
-      '<div class="badge" style="margin-top:10px">Jerod · Nancy · Tyler</div>' +
+      '<h1 style="font-size:2.1rem">Janty</h1>' +
+      '<div class="muted small" style="letter-spacing:.3em; text-transform:uppercase; margin-top:4px">The Game of Games</div>' +
+      '<div class="badge" style="margin-top:10px">Jerod Greigh Thornton · Nancy Lee Daly · Tyler Scott</div>' +
       '<p class="muted small" style="margin-top:10px">Remember: it is not a game. It is a war. Pick your game piece, name your team, and prepare for the ritual.</p>' +
     '</div>' +
     '<div class="card enter">' +
@@ -407,6 +581,7 @@ function viewRitual(){
       '</ol>' +
       '<div class="banner small" style="margin-top:6px">🔥 House safety: no smashing real glass. Toast, cheer, or stomp a designated stand-in instead. First-aid kit stays within reach. Watch the fire.</div>' +
       '<button class="btn block" style="margin-top:14px" data-action="war-dance">🪘 Perform the War Dance</button>' +
+      '<button class="btn ghost block small" style="margin-top:8px" data-action="music-toggle">'+(Music.playing?"🔇 Stop the music":"🔊 Play classical music")+'</button>' +
       '<button class="btn ghost block" style="margin-top:10px" data-action="begin-game">We are ready — Start the game</button>' +
       '<div class="muted tiny center" style="margin-top:10px">Tip: decide who goes first — or let fate decide with a random start.</div>' +
       '<div class="row tight" style="margin-top:10px; justify-content:center">' +
@@ -429,6 +604,8 @@ function playerTrack(pl, idx){
   var flags = "";
   if(pl.skipNext) flags += ' <span class="badge">skip next</span>';
   if(pl.jail) flags += ' <span class="badge">in jail</span>';
+  if(pl.accent) flags += ' <span class="badge">🌍 '+esc(pl.accent)+'</span>';
+  if(!pl.done && pl.timeouts>0) flags += ' <span class="badge">⏱ '+pl.timeouts+'</span>';
   if(pl.done) flags += ' <span class="badge black">'+placeLabel(pl.place)+'</span>';
 
   var cls = "track" + (idx===S.active && !pl.done ? " active":"") + (pl.done?" done":"");
@@ -449,6 +626,25 @@ function viewPlay(){
   var drink = ap.level===0?"wine":ap.level===1?"beer":"liquor";
   var desc = ap.level===0?"Trivia, Puzzles & Artistry":ap.level===1?"Physical Challenge, Pain & Endurance":"Emotional Battery & Public Humiliation";
 
+  var accentPanel = "";
+  var lvl2 = S.players.filter(function(p){ return p.level===1 && !p.done; });
+  if(lvl2.length){
+    accentPanel = '<div class="card enter"><h3>🌍 Accent Challenge</h3>' +
+      '<p class="muted small">Everyone at Level 2 (Body) speaks in an assigned accent for the rest of the level, or drinks. Spin the globe once — it is locked in until the level ends.</p>' +
+      '<div class="grid" style="margin-top:10px">' +
+        lvl2.map(function(p){
+          if(p.accent){
+            return '<div class="track"><div class="who"><div class="ava">'+p.avatar+'</div>' +
+              '<div style="min-width:0"><div class="nm">'+esc(p.name)+'</div><div class="tn">Accent: '+esc(p.accent)+'</div></div></div>' +
+              '<div style="font-size:1.4rem">🌍</div></div>';
+          }
+          return '<div class="track"><div class="who"><div class="ava">'+p.avatar+'</div>' +
+            '<div style="min-width:0"><div class="nm">'+esc(p.name)+'</div><div class="tn">No accent yet</div></div></div>' +
+            '<button class="btn small" data-action="spin-accent" data-id="'+p.id+'">🌍 Spin</button></div>';
+        }).join("") +
+      '</div></div>';
+  }
+
   return '<div class="banner hot center enter">' +
       '<div class="muted tiny" style="letter-spacing:.24em; text-transform:uppercase">Turn '+S.turn+' · Level '+(ap.level+1)+': '+lvlName+'</div>' +
       '<h2 style="margin-top:4px">'+ap.avatar+' '+esc(ap.name)+'\u2019s turn</h2>' +
@@ -457,6 +653,8 @@ function viewPlay(){
     '<div class="card enter">' +
       '<div class="grid">'+tracks+'</div>' +
     '</div>' +
+    accentPanel +
+    timeoutPanel() +
     '<div class="card enter">' +
       '<div class="row" style="justify-content:center">' +
         '<button class="btn" data-action="draw" style="min-width:220px">🎴 Draw a Card</button>' +
@@ -468,6 +666,20 @@ function viewPlay(){
       '</div>' +
       (S.log.length? '<div class="log">'+S.log.map(function(l){return '<div>'+esc(l)+'</div>';}).join("")+'</div>' : '') +
     '</div>';
+}
+
+function timeoutPanel(){
+  var rows = S.players.filter(function(p){ return !p.done; }).map(function(p){
+    var btn = p.timeouts>0
+      ? '<button class="btn small" data-action="timeout" data-id="'+p.id+'">⏱ Call timeout</button>'
+      : '<span class="muted tiny">none left</span>';
+    return '<div class="track"><div class="who"><div class="ava">'+p.avatar+'</div>' +
+      '<div style="min-width:0"><div class="nm">'+esc(p.name)+'</div><div class="tn">'+p.timeouts+' of 3 timeouts left</div></div></div>' +
+      btn + '</div>';
+  }).join("");
+  return '<div class="card enter"><h3>⏱ Timeouts</h3>' +
+    '<p class="muted small">Each player gets 3 timeouts. Call one to pause the round for a rule check, a breather, or a refill.</p>' +
+    '<div class="grid" style="margin-top:10px">'+rows+'</div></div>';
 }
 
 function renderFooter(){
@@ -491,7 +703,7 @@ function viewOver(){
   return '<div class="card enter center">' +
       '<div class="badge">Game Over</div>' +
       '<h1 style="margin-top:8px; font-size:2rem">'+winner.avatar+' '+esc(winner.name)+' wins!</h1>' +
-      '<p class="muted small">The Golden Geese bow. The game pieces of the fallen await their fate.</p>' +
+      '<p class="muted small">The losers bow. The game pieces of the fallen await their fate.</p>' +
       '<button class="btn block" style="margin-top:8px" data-action="smash">💥 Smash the losing game pieces</button>' +
     '</div>' +
     '<div class="card enter"><h3>Final standings</h3><div class="grid">'+lines+'</div></div>' +
@@ -534,9 +746,15 @@ function renderModal(){
       : L===2
       ? '<ul class="steps"><li>Cards are <b>Physical Challenge, Pain, and Endurance</b>.</li><li>Only <b>'+dn+'</b> is served.</li><li><b>NO CURSING.</b> Offenders sip for 5 seconds while the others count — as slowly as they like.</li><li>The level opens with the <b>Accent Challenge</b>.</li><li>Clear <b>'+required()+' cards</b> to advance to Spirit.</li></ul>'
       : '<ul class="steps"><li>Cards are <b>Emotional Battery and Public Humiliation</b>.</li><li>Only <b>'+dn+'</b> is served.</li><li><b>No mercy.</b> Roasts are personal. Skin is thick.</li><li>Clear <b>'+required()+' cards</b> to win the game.</li></ul>';
+    var l2pid = S.modal.playerId;
+    var l2p = (l2pid!=null) ? S.players.find(function(x){return x.id===l2pid;}) : activePlayer();
+    var accentBlock = L===2 ? '<div class="banner hot" style="margin-top:10px"><b>🌍 Accent Challenge:</b> ' +
+        (l2p.accent ? 'Your accent is <b>'+esc(l2p.accent)+'</b>. Speak it for the rest of the level or drink.' :
+          'Spin the globe to lock in your accent for this level.') +
+        (l2p.accent ? '' : '<br><button class="btn small" style="margin-top:8px" data-action="spin-accent" data-id="'+l2p.id+'">🌍 Spin the globe</button>') +
+        '<div class="muted tiny" style="margin-top:6px">Anyone else who reaches Level 2 can spin from the game board.</div></div>' : '';
     html = '<div class="card enter"><div class="badge">Level '+L+' of 3</div>' +
-      '<h2 style="margin-top:8px">'+levelLabel(L-1)+'</h2>' + body +
-      (L===2 ? '<div class="banner hot" style="margin-top:10px"><b>🌍 Accent Challenge:</b> <span id="accentOut">Spin the globe below</span><br><button class="btn small" style="margin-top:8px" data-action="spin-globe">🌍 Spin the globe</button> <span class="muted tiny">each player gets an accent for this level</span></div>' : '') +
+      '<h2 style="margin-top:8px">'+levelLabel(L-1)+'</h2>' + body + accentBlock +
       '<button class="btn block" style="margin-top:14px" data-action="close-modal">Begin Level '+L+'</button></div>';
   }
   else if(kind==="blackcard"){
@@ -560,15 +778,37 @@ function renderModal(){
   else if(kind==="countdown"){
     html = '<div class="card enter center"><h3>'+esc(S.modal.title)+'</h3>' +
       '<p class="muted small">'+esc(S.modal.sub)+'</p>' +
-      '<div class="count" id="cd">5</div>' +
-      '<button class="btn good block" data-action="close-modal">Done drinking</button></div>';
+      '<div class="count" id="cd">'+(S.modal.seconds||5)+'</div>' +
+      '<button class="btn good block" data-action="close-modal">'+(S.modal.doneLabel||"Done")+'</button></div>';
   }
   else if(kind==="menu"){
     html = '<div class="card enter"><h3>Menu</h3>' +
       '<button class="btn ghost block" style="margin-top:10px" data-action="close-modal">Resume</button>' +
       '<button class="btn ghost block" style="margin-top:10px" data-action="open-rules">Open the rulebook</button>' +
+      '<button class="btn ghost block" style="margin-top:10px" data-action="open-sync">'+syncLabel()+'</button>' +
       '<button class="btn ghost block" style="margin-top:10px" data-action="save-note">Progress auto-saves on this device</button>' +
       '<button class="btn bad block" style="margin-top:10px" data-action="confirm-reset">Reset the entire game</button></div>';
+  }
+  else if(kind==="sync"){
+    var cfg = GunRef.cfg();
+    var room = S.modal.room != null ? S.modal.room : (cfg.room||"");
+    var relay = S.modal.relay != null ? S.modal.relay : (cfg.relay||"");
+    var statusText = GunRef.status==="on" ? "Connected. Every device in this room sees the same game live."
+      : GunRef.status==="connecting" ? "Connecting to the relay…"
+      : GunRef.status==="error" ? (S.modal.err||"Connection failed.")
+      : "Not connected. Everyone joins the same room code on the same relay.";
+    html = '<div class="card enter"><div class="badge">Multi-device</div>' +
+      '<h3 style="margin-top:8px">Play across devices</h3>' +
+      '<p class="muted small">Share a room code so every phone and tablet sees the same board. Powered by gun.js — devices sync peer-to-peer through a relay.</p>' +
+      '<div class="field" style="margin-top:12px"><label>Room code (share this)</label>' +
+        '<input type="text" data-field="syncRoom" value="'+esc(room)+'" maxlength="24" placeholder="e.g. firepit-janty" /></div>' +
+      '<div class="field" style="margin-top:10px"><label>Relay URL (optional, comma-separated)</label>' +
+        '<input type="text" data-field="syncRelay" value="'+esc(relay)+'" placeholder="https://your-relay.example/gun" /></div>' +
+      '<div class="banner small" style="margin-top:10px">'+esc(statusText)+'</div>' +
+      (GunRef.status==="on"
+        ? '<button class="btn bad block" style="margin-top:12px" data-action="sync-disconnect">Disconnect</button>'
+        : '<button class="btn block" style="margin-top:12px" data-action="sync-connect">Connect to room</button>') +
+      '<button class="btn ghost block small" style="margin-top:8px" data-action="close-modal">Close</button></div>';
   }
 
   m.innerHTML = '<div class="overlay" data-overlay="1"><div id="modalBox" style="width:100%">'+html+'</div></div>';
@@ -647,9 +887,11 @@ function viewBlack(){
   return '<div class="card enter">'+inner+'</div>';
 }
 
-function viewRules(){
+function viewRules(actionName, actionLabel){
+  actionName = actionName || "close-modal";
+  actionLabel = actionLabel || "Back to the game";
   return '<div class="card enter"><div class="badge">The Rulebook</div>' +
-    '<h2 style="margin-top:8px">Chardee MacDennis</h2>' +
+    '<h2 style="margin-top:8px">Janty</h2>' +
     '<p class="muted small">It is not a game. It is a war.</p>' +
 
     '<h3 style="margin-top:16px">The goal</h3>' +
@@ -675,27 +917,33 @@ function viewRules(){
     '<p class="small">Cheating is tolerated, accepted, and part of the game. But if you are caught: the opposing team advances one level. If the cheating team is ahead, the opposing team advances to the same level. Accents drop the moment cheating is caught, so you can shame them properly in your native tongue.</p>' +
 
     '<h3 style="margin-top:14px">The clock &amp; stoppages</h3>' +
-    '<p class="small">15 minutes on the game clock (or your house setting). Stoppages happen between rounds, during time-outs, and for injuries. Each player gets 3 time-outs. There is a halftime, post-level breaks, and a two-minute warning.</p>' +
+    '<p class="small">15 minutes on the game clock (or your house setting). Stoppages happen between rounds, during time-outs, and for injuries. Each player gets 3 time-outs — use the ⏱ button on the board to spend one. There is a halftime, post-level breaks, and a two-minute warning.</p>' +
 
     '<h3 style="margin-top:14px">The Black Card</h3>' +
     '<p class="small">If the clock runs out with no winner, draw the Black Card. It decides the game — coin flip, high card, dare duel, and worse.</p>' +
 
     '<h3 style="margin-top:14px">House rules (this table)</h3>' +
     '<ul class="steps"><li><b>BYO sip mode:</b> every "drink" is a sip of whatever is in your cup.</li>' +
+    '<li><b>Multi-device:</b> open the menu, set a room code, and every phone in the room follows the same board live (gun.js).</li>' +
     '<li>No smashing real glass. Toast, cheer, or stomp a stand-in.</li>' +
     '<li>Consent always wins. Anyone can swap a humiliation card for a 3-sip forfeit, no questions asked.</li>' +
     '<li>Water is always allowed. Nobody is expected to get annihilated.</li>' +
     '<li>First-aid kit within reach. Mind the fire.</li></ul>' +
 
-    '<button class="btn block" style="margin-top:16px" data-action="close-modal">Back to the game</button></div>';
+    '<button class="btn block" style="margin-top:16px" data-action="'+actionName+'">'+actionLabel+'</button></div>';
 }
 
 /* ---------- clock ---------- */
 
+function clockRemaining(){
+  if(S.timer && S.timer.endAt) return Math.max(0, Math.round((S.timer.endAt - Date.now())/1000));
+  return (S.timer && S.timer.remaining) || 0;
+}
+
 function renderClock(){
   var c = byId("clock");
   if(!c || c.hidden) return;
-  var r = S.timer.remaining;
+  var r = clockRemaining();
   var m = Math.floor(r/60), s = r%60;
   c.textContent = m + ":" + (s<10?"0":"") + s;
   c.classList.toggle("warn", r<=120);
@@ -703,27 +951,35 @@ function renderClock(){
 
 function tickClock(){
   if(!S || S.phase!=="play" || !S.timer.running) return;
-  S.timer.remaining--;
-  var r = S.timer.remaining;
-  if(r===120) beep(660,.15);
-  if(r===0){
+  var r = clockRemaining();
+  var prev = S.timer.remaining;
+  S.timer.remaining = r;
+  if(r===120 && prev!==120) beep(660,.15);
+  if(r<=0){
     S.timer.running = false;
+    S.timer.endAt = 0;
     beep(300,.6);
     if(S.finishedOrder.length){ endGame(); }
     else { S.modal = {kind:"blackcard"}; addLog("Clock expired — Black Card drawn."); render(); }
     return;
   }
   renderClock();
-  save();
 }
 
 function startClock(){
-  if(S.config.timerMin<=0){ S.timer = {total:0,remaining:0,running:false}; return; }
+  if(S.config.timerMin<=0){ S.timer = {total:0,remaining:0,running:false,endAt:0}; return; }
   S.timer.total = S.config.timerMin*60;
   S.timer.remaining = S.timer.total;
+  S.timer.endAt = Date.now() + S.timer.total*1000;
   S.timer.running = true;
   if(timerId) clearInterval(timerId);
   timerId = setInterval(tickClock, 1000);
+}
+
+function ensureClock(){
+  if(S.phase==="play" && S.timer && S.timer.running && S.timer.total>0){
+    if(!timerId) timerId = setInterval(tickClock, 1000);
+  }
 }
 
 /* ---------- flow ---------- */
@@ -754,6 +1010,7 @@ function earnCard(player){
   if(player.cards >= required()){
     player.cards = 0;
     player.level++;
+    if(player.level !== 1) player.accent = "";
     if(player.level >= 3){
       player.done = true;
       player.place = S.finishedOrder.length + 1;
@@ -763,7 +1020,7 @@ function earnCard(player){
       return "won";
     }
     addLog(player.name + " advanced to Level " + (player.level+1) + ": " + levelLabel(player.level) + ".");
-    S.modal = {kind:"levelintro", level:player.level+1, thenEndTurn:true};
+    S.modal = {kind:"levelintro", level:player.level+1, thenEndTurn:true, playerId:player.id};
     return "advanced";
   }
   return "card";
@@ -788,6 +1045,7 @@ function nextPlayer(){
       continue;
     }
     S.active = i;
+    if(S.players[i].jail){ S.players[i].jail = false; addLog(S.players[i].name + " served their time — out of jail."); }
     return;
   }
 }
@@ -797,8 +1055,6 @@ function endTurn(){
   S.modal = null;
   S.turn++;
   nextPlayer();
-  var ap = activePlayer();
-  if(ap.jail){ addLog(ap.name + " is still in jail — finish your drink to get out."); }
   save();
   render();
 }
@@ -851,7 +1107,10 @@ function dealHighCards(){
 /* ---------- countdown ---------- */
 
 function startCountdown(){
-  var n = 5;
+  var secs = (S.modal && S.modal.seconds) || 5;
+  var end = (S.modal && S.modal.end) || "🍻";
+  var drum = S.modal && S.modal.drum;
+  var n = secs;
   var node = byId("cd");
   if(!node) return;
   node.textContent = n;
@@ -860,10 +1119,10 @@ function startCountdown(){
     n--;
     node = byId("cd");
     if(!node){ clearInterval(iv); return; }
-    if(n<=0){ node.textContent = "🍻"; clearInterval(iv); beep(520,.2); return; }
+    if(n<=0){ node.textContent = end; clearInterval(iv); beep(520,.2); return; }
     node.textContent = n;
     node.classList.remove("shake"); void node.offsetWidth; node.classList.add("shake");
-    beep(700,.1);
+    if(drum){ beep(150 + (n%2)*70, .12); } else { beep(700,.1); }
   }, 1000);
 }
 
@@ -903,12 +1162,16 @@ document.addEventListener("click", function(e){
       break;
     case "randomize":
       shuffle(AVATARS).slice(0,3).forEach(function(a,k){ S.players[k].avatar=a; }); render(); save(); break;
-    case "to-ritual": S.phase="ritual"; render(); save(); break;
+    case "to-setup": S.phase="setup"; save(); render(); break;
+    case "to-ritual": S.phase="ritual"; Music.muted=false; save(); render(); break;
+    case "music-toggle": Music.toggle(); render(); break;
     case "war-dance":
+      S.modal = {kind:"countdown", seconds:15, end:"🪘", drum:true, doneLabel:"War dance complete",
+        title:"🪘 War Dance!", sub:"Dance fiercely. Intimidate your opponents. Show off your physical prowess. Keep it up until the drum stops."};
       document.body.classList.add("shake");
-      beep(180,.4); setTimeout(function(){beep(220,.4);},220); setTimeout(function(){beep(160,.5);},480);
-      setTimeout(function(){ document.body.classList.remove("shake"); }, 700);
+      setTimeout(function(){ document.body.classList.remove("shake"); }, 900);
       addLog("A fierce war dance was performed. Intimidation achieved.");
+      render();
       break;
     case "random-start":
       S.active = Math.floor(Math.random()*S.players.length);
@@ -943,6 +1206,15 @@ document.addEventListener("click", function(e){
       applyChance(S.card); S.modal=null; save(); endTurn(); break;
     case "pass":
       addLog(activePlayer().name + " passed."); endTurn(); break;
+    case "timeout":
+      var tid = parseInt(t.getAttribute("data-id"),10);
+      var tp = S.players.find(function(x){return x.id===tid;});
+      if(tp && tp.timeouts>0){
+        tp.timeouts--;
+        addLog(tp.name + " called a timeout (" + tp.timeouts + " left). Play pauses.");
+        beep(420,.2); setTimeout(function(){ beep(320,.25); }, 220);
+      }
+      save(); render(); break;
     case "infraction":
       S.ui.inf = {ids:[], type:"Question asked"}; S.modal={kind:"infraction"}; render(); break;
     case "inf-toggle":
@@ -961,11 +1233,31 @@ document.addEventListener("click", function(e){
       S.modal={kind:"blackcard", black:BLACK_CARDS[Math.floor(Math.random()*BLACK_CARDS.length)]}; render(); break;
     case "highcard":
       dealHighCards(); break;
-    case "spin-globe":
-      var out = byId("accentOut");
-      if(out){ var a = ACCENTS[Math.floor(Math.random()*ACCENTS.length)]; out.textContent = "Everyone speaks as: " + a; }
-      beep(500,.15); break;
+    case "spin-accent":
+      var pid = parseInt(t.getAttribute("data-id"),10);
+      var pp = S.players.find(function(x){return x.id===pid;});
+      if(pp && pp.level===1 && !pp.accent){
+        pp.accent = ACCENTS[Math.floor(Math.random()*ACCENTS.length)];
+        addLog(pp.name + " must speak as: " + pp.accent + ".");
+        beep(500,.15);
+      }
+      save(); render(); break;
     case "open-rules": S.modal={kind:"rules"}; render(); break;
+    case "open-sync": S.modal={kind:"sync"}; render(); break;
+    case "sync-connect":
+      var rc = ((S.modal && S.modal.room)||"").trim();
+      var rl = ((S.modal && S.modal.relay)||"").trim();
+      if(!rc){ S.modal.err = "Enter a room code first."; renderModal(); break; }
+      S.modal.err = "Connecting…";
+      renderModal();
+      GunRef.connect(rc, rl, function(err){
+        S.modal = {kind:"sync", room:rc, relay:rl, err:err||null};
+        render();
+      });
+      break;
+    case "sync-disconnect":
+      var dcr = (S.modal && S.modal.room)||"", dcl = (S.modal && S.modal.relay)||"";
+      GunRef.disconnect(); S.modal={kind:"sync", room:dcr, relay:dcl}; render(); break;
     case "menu": S.modal={kind:"menu"}; render(); break;
     case "save-note": addLog("Progress is saved on this device."); renderModal(); break;
     case "confirm-reset":
@@ -989,6 +1281,8 @@ document.addEventListener("input", function(e){
     var v = e.target.value.trim();
     if(v){ S.players[i].avatar = v; render(); }
   }
+  else if(f==="syncRoom"){ if(S.modal && S.modal.kind==="sync") S.modal.room = e.target.value; return; }
+  else if(f==="syncRelay"){ if(S.modal && S.modal.kind==="sync") S.modal.relay = e.target.value; return; }
   save();
 });
 
@@ -1006,11 +1300,20 @@ document.addEventListener("change", function(e){
 
 S = load();
 if(S && S.phase){
-  if(S.phase==="play" && S.timer && S.timer.total>0 && S.timer.running){ startClock(); }
+  if(!S.timer) S.timer = {total:0, remaining:0, running:false, endAt:0};
+  if(S.players) S.players.forEach(function(p){
+    if(p.timeouts==null) p.timeouts = 3;
+    if(p.accent==null) p.accent = "";
+  });
 } else {
   S = freshState();
 }
 render();
+ensureClock();
+(function(){
+  var cfg = GunRef.cfg();
+  if(cfg.room){ GunRef.connect(cfg.room, cfg.relay||"", function(){ render(); }); }
+})();
 </script>
 </body>
 </html>
