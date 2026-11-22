@@ -6,6 +6,7 @@ var DEVICE_STORE = "chardee_device_v1";
 var SYNC_STORE = "chardee_sync_v1";
 var S = null;
 var timerId = null;
+var warDanceTimer = null;
 
 function el(html){ var d=document.createElement("div"); d.innerHTML=html.trim(); return d.firstElementChild; }
 function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]; }); }
@@ -41,20 +42,15 @@ function baseState(){
     active:0, turn:1, log:[], card:null, steal:false,
     decks:{1:[],2:[],3:[]}, finishedOrder:[],
     timer:{total:0, remaining:0, running:false, endAt:0},
-    black:{},
+    black:{}, warDance:null, pause:null,
     modal:null, ui:{}
   };
 }
 
+function uid(){ return "p" + Math.random().toString(36).slice(2,9); }
 function newPlayer(dev, name, avatar){
-  return {id:0, deviceId:dev, name:name||"", avatar:avatar||"🔥", team:"", level:0, cards:0,
+  return {id:uid(), deviceId:dev, name:name||"", avatar:avatar||"🔥", team:"", level:0, cards:0,
     skipNext:false, jail:false, accent:"", timeouts:3, done:false, place:null};
-}
-
-function nextPlayerId(){
-  var m = 0;
-  S.players.forEach(function(p){ if(p.id>m) m = p.id; });
-  return m+1;
 }
 
 function freshRoom(room, hostId){
@@ -67,7 +63,6 @@ function freshLocal(){
   var s = baseState();
   s.phase = "setup";
   s.players = [ newPlayer("local","Nancy","🦊"), newPlayer("local","Tyler","🐻"), newPlayer("local","Jerod","🐺") ];
-  s.players.forEach(function(p,i){ p.id = i+1; });
   return s;
 }
 
@@ -192,12 +187,10 @@ function syncMusic(){
 
 /* ---------- multiplayer sync (gun.js) ---------- */
 
-var SYNC_FIELDS = ["room","hostId","phase","started","players","config","active","turn","log","card","steal","decks","finishedOrder","timer","black"];
+var SYNC_FIELDS = ["room","hostId","phase","started","players","config","active","turn","log","card","steal","decks","finishedOrder","timer","black","warDance","pause"];
 var DEFAULT_RELAYS = [
-  "https://gun-manhattan.herokuapp.com/gun",
-  "https://gun.o8.is/gun",
-  "https://shogun-relay.scobrudot.dev/gun",
-  "https://relay.peer.ooo/gun"
+  "https://gun.ankush.one/gun",
+  "https://gun.defucc.me/gun"
 ];
 
 var GunRef = {
@@ -226,12 +219,26 @@ var GunRef = {
       self.node = self.gun.get("janty-rooms").get(room);
       SYNC_FIELDS.forEach(function(f){
         self.node.get(f).on(function(data){
-          if(!self.ready) return;
           if(typeof data !== "string") return;
           if(data === self.last[f]) return;
           self.last[f] = data;
-          try{ S[f] = JSON.parse(data); }catch(e){}
-          self.received = true;
+          var val; try{ val = JSON.parse(data); }catch(e){ return; }
+          if(f === "players"){
+            var merged = mergePlayers(S.players, val);
+            var changed = JSON.stringify(merged) !== JSON.stringify(val);
+            S.players = merged;
+            self.received = true;
+            if(changed) self.pushField("players");
+          } else if(f === "log"){
+            var mlog = mergeLog(S.log, val);
+            var lchanged = JSON.stringify(mlog) !== JSON.stringify(val);
+            S.log = mlog;
+            self.received = true;
+            if(lchanged) self.pushField("log");
+          } else {
+            S[f] = val;
+            self.received = true;
+          }
           self.scheduleRender();
         });
       });
@@ -246,6 +253,11 @@ var GunRef = {
       }, 1000);
       cb(null);
     });
+  },
+  pushField:function(f){
+    if(!this.ready || !this.node) return;
+    var json; try{ json = JSON.stringify(S[f]); }catch(e){ return; }
+    if(this.last[f] !== json){ this.last[f] = json; this.node.get(f).put(json); }
   },
   push:function(force){
     if(!this.ready || !this.node) return;
@@ -278,10 +290,30 @@ function registerMe(){
   if(S.phase!=="lobby" && S.phase!=="play") return;
   if(me()) return;
   var p = newPlayer(MYID, "", randomAvatar());
-  p.id = nextPlayerId();
   S.players.push(p);
   addLog("A challenger entered the room.");
   save();
+}
+
+function mergePlayers(local, remote){
+  var byDev = {}, out = [], seen = {};
+  (local||[]).forEach(function(p){ if(p && p.deviceId) byDev[p.deviceId] = p; });
+  (remote||[]).forEach(function(rp){
+    if(!rp || !rp.deviceId) return;
+    if(rp.deviceId === MYID) return;
+    byDev[rp.deviceId] = Object.assign({}, byDev[rp.deviceId]||{}, rp);
+  });
+  (local||[]).forEach(function(p){ if(p && p.deviceId && !seen[p.deviceId]){ seen[p.deviceId]=1; out.push(byDev[p.deviceId]); } });
+  (remote||[]).forEach(function(rp){ if(rp && rp.deviceId && !seen[rp.deviceId]){ seen[rp.deviceId]=1; out.push(byDev[rp.deviceId]); } });
+  return out;
+}
+
+function mergeLog(local, remote){
+  var seen = {}, out = [];
+  (remote||[]).forEach(function(l){ if(typeof l==="string" && !seen[l]){ seen[l]=1; out.push(l); } });
+  (local||[]).forEach(function(l){ if(typeof l==="string" && !seen[l]){ seen[l]=1; out.push(l); } });
+  if(out.length>40) out.length = 40;
+  return out;
 }
 
 function syncLabel(){
@@ -413,7 +445,7 @@ function viewLobby(){
         '<button class="btn ghost small" data-action="invite">📨 Invite</button>' +
         '<button class="btn ghost small" data-action="leave-room">Leave room</button>' +
       '</div>' +
-      '<div class="muted tiny center" style="margin-top:10px">Only the player whose turn it is may draw cards. Anyone can call a timeout or log an infraction.</div>' +
+      '<div class="muted tiny center" style="margin-top:10px">Only the player whose turn it is may draw cards. You can call your own timeout; anyone can log an infraction.</div>' +
     '</div>';
 }
 
@@ -623,15 +655,18 @@ function viewCardPanel(){
 
 function timeoutPanel(){
   var rows = S.players.filter(function(p){ return !p.done; }).map(function(p){
-    var btn = p.timeouts>0
-      ? '<button class="btn small" data-action="timeout" data-id="'+p.id+'">⏱ Call timeout</button>'
-      : '<span class="muted tiny">none left</span>';
+    var own = p.deviceId===MYID;
+    var btn = own
+      ? (S.pause ? '<span class="muted tiny">pause active</span>'
+         : p.timeouts>0 ? '<button class="btn small" data-action="timeout" data-id="'+p.id+'">⏱ Call timeout</button>'
+         : '<span class="muted tiny">none left</span>')
+      : '<span class="muted tiny">'+(p.timeouts>0?'⏱ '+p.timeouts:'—')+'</span>';
     return '<div class="track"><div class="who"><div class="ava">'+p.avatar+'</div>' +
       '<div style="min-width:0"><div class="nm">'+esc(p.name||"…")+'</div><div class="tn">'+p.timeouts+' of 3 timeouts left</div></div></div>' +
       btn + '</div>';
   }).join("");
   return '<div class="card enter"><h3>⏱ Timeouts</h3>' +
-    '<p class="muted small">Each player gets 3 timeouts. Anyone can call one for any player — to pause for a rule check, a breather, or a refill.</p>' +
+    '<p class="muted small">Each player gets 3 timeouts. You can only call one of your own — it pauses every device, and only you can resume.</p>' +
     '<div class="grid" style="margin-top:10px">'+rows+'</div></div>';
 }
 
@@ -665,11 +700,75 @@ function viewOver(){
     '</div>';
 }
 
+/* ---------- synced overlays ---------- */
+
+function showOverlay(html){
+  var m = byId("modal");
+  m.innerHTML = '<div class="overlay" data-overlay="1"><div id="modalBox" style="width:100%">'+html+'</div></div>';
+}
+
+function warDanceRemaining(){
+  if(!S.warDance || !S.warDance.endAt) return 0;
+  return Math.max(0, Math.ceil((S.warDance.endAt - Date.now())/1000));
+}
+
+function startWarDanceTicker(){
+  if(warDanceTimer){ clearInterval(warDanceTimer); warDanceTimer = null; }
+  if(!S.warDance || warDanceRemaining()<=0) return;
+  warDanceTimer = setInterval(function(){
+    if(!S.warDance || S.phase!=="ritual" || warDanceRemaining()<=0){
+      if(warDanceTimer){ clearInterval(warDanceTimer); warDanceTimer = null; }
+      render();
+      return;
+    }
+    var n = warDanceRemaining(), node = byId("cd");
+    if(node){
+      node.textContent = n;
+      node.classList.remove("shake"); void node.offsetWidth; node.classList.add("shake");
+      beep(150 + (n%2)*70, .12);
+    }
+  }, 1000);
+}
+
+function pauseOverlayHtml(){
+  var p = S.pause || {}, mine = me();
+  var owner = !!mine && p.by===mine.id;
+  return '<div class="card enter center"><div class="badge">Timeout</div>' +
+    '<h2 style="margin-top:8px">⏱ Play paused</h2>' +
+    '<p class="muted small">'+esc(p.name||"A player")+' called a timeout. The clock is stopped and play is on hold.</p>' +
+    (owner
+      ? '<button class="btn good block" style="margin-top:14px" data-action="resume-timeout">▶ Resume the game</button>'
+      : '<div class="banner small" style="margin-top:12px">Waiting for '+esc(p.name||"the player")+' to resume.</div>') +
+    '</div>';
+}
+
+function warDanceOverlayHtml(n){
+  return '<div class="card enter center"><div class="badge">The Ritual</div>' +
+    '<h2 style="margin-top:8px">🪘 War Dance!</h2>' +
+    '<p class="muted small">Dance fiercely. Intimidate your opponents. Show off your physical prowess.</p>' +
+    '<div class="count" id="cd">'+n+'</div>' +
+    '<div class="muted tiny" style="margin-top:8px">Everyone in the room sees this same countdown.</div></div>';
+}
+
+function warDanceConfirmHtml(){
+  return '<div class="card enter center"><div class="badge">Ritual complete</div>' +
+    '<h2 style="margin-top:8px">🪘 The war dance is done.</h2>' +
+    '<p class="muted small">Ready to begin? Confirming starts the game on every device.</p>' +
+    '<button class="btn good block" style="margin-top:14px" data-action="confirm-start">▶ Start the game</button></div>';
+}
+
 /* ---------- modals ---------- */
 
 function renderModal(){
   var m = byId("modal");
   var box = byId("modalBox");
+  if(S.pause && S.phase==="play"){ showOverlay(pauseOverlayHtml()); return; }
+  if(S.warDance && S.phase==="ritual"){
+    var left = warDanceRemaining();
+    if(left>0){ showOverlay(warDanceOverlayHtml(left)); startWarDanceTicker(); }
+    else { showOverlay(warDanceConfirmHtml()); }
+    return;
+  }
   if(!S.modal){ m.innerHTML = ""; return; }
   var html = "";
   var kind = S.modal.kind;
@@ -1157,12 +1256,19 @@ document.addEventListener("click", function(e){
     case "to-ritual": S.phase="ritual"; Music.muted=false; save(); render(); break;
     case "music-toggle": Music.toggle(); render(); break;
     case "war-dance":
-      S.modal = {kind:"countdown", seconds:15, end:"🪘", drum:true, doneLabel:"War dance complete",
-        title:"🪘 War Dance!", sub:"Dance fiercely. Intimidate your opponents. Show off your physical prowess. Keep it up until the drum stops."};
+      if(S.warDance) break;
+      var wnow = Date.now();
+      S.warDance = {by:MYID, startedAt:wnow, endAt:wnow+15000};
       document.body.classList.add("shake");
       setTimeout(function(){ document.body.classList.remove("shake"); }, 900);
+      beep(700,.12);
       addLog("A fierce war dance was performed. Intimidation achieved.");
-      render();
+      save(); render();
+      break;
+    case "confirm-start":
+      if(!S.warDance) break;
+      S.warDance = null;
+      beginGame();
       break;
     case "random-start":
       S.active = Math.floor(Math.random()*S.players.length);
@@ -1201,18 +1307,33 @@ document.addEventListener("click", function(e){
       if(!isMyTurn()) break;
       addLog(activePlayer().name + " passed."); endTurn(); break;
     case "timeout":
-      var tid = parseInt(t.getAttribute("data-id"),10);
-      var tp = S.players.find(function(x){return x.id===tid;});
-      if(tp && tp.timeouts>0){
-        tp.timeouts--;
-        addLog(tp.name + " called a timeout (" + tp.timeouts + " left). Play pauses.");
-        beep(420,.2); setTimeout(function(){ beep(320,.25); }, 220);
+      var tid = t.getAttribute("data-id"), mine = me();
+      if(!mine || tid!==mine.id || mine.timeouts<=0 || S.pause) break;
+      mine.timeouts--;
+      S.pause = {by:mine.id, name:mine.name, at:Date.now()};
+      if(S.timer && S.timer.running){
+        S.timer.remaining = clockRemaining(); S.timer.running = false; S.timer.endAt = 0;
       }
+      addLog(mine.name + " called a timeout (" + mine.timeouts + " left). Play pauses.");
+      beep(420,.2); setTimeout(function(){ beep(320,.25); }, 220);
+      save(); render(); break;
+    case "resume-timeout":
+      if(!S.pause) break;
+      var resumer = me();
+      if(!resumer || S.pause.by!==resumer.id) break;
+      S.pause = null;
+      if(S.config.timerMin>0 && S.timer && S.timer.total>0){
+        S.timer.endAt = Date.now() + S.timer.remaining*1000;
+        S.timer.running = true;
+      }
+      addLog(resumer.name + " resumed the game.");
+      if(timerId){ clearInterval(timerId); timerId = null; }
+      ensureClock();
       save(); render(); break;
     case "infraction":
       S.ui.inf = {ids:[], type:"Question asked"}; S.modal={kind:"infraction"}; render(); break;
     case "inf-toggle":
-      var id = parseInt(t.getAttribute("data-id"),10);
+      var id = t.getAttribute("data-id");
       var arr = S.ui.inf.ids, idx = arr.indexOf(id);
       if(idx>=0) arr.splice(idx,1); else arr.push(id);
       renderModal(); break;
@@ -1228,7 +1349,7 @@ document.addEventListener("click", function(e){
     case "highcard":
       dealHighCards(); break;
     case "spin-accent":
-      var pid = parseInt(t.getAttribute("data-id"),10);
+      var pid = t.getAttribute("data-id");
       var pp = S.players.find(function(x){return x.id===pid;});
       if(pp && pp.level===1 && !pp.accent){
         pp.accent = ACCENTS[Math.floor(Math.random()*ACCENTS.length)];
@@ -1301,6 +1422,8 @@ document.addEventListener("change", function(e){
   if(!S.timer) S.timer = {total:0, remaining:0, running:false, endAt:0};
   if(!S.config) S.config = defaultConfig();
   if(!S.ui) S.ui = {};
+  if(!("warDance" in S)) S.warDance = null;
+  if(!("pause" in S)) S.pause = null;
   S.modal = null;
   if(!Array.isArray(S.players)) S.players = [];
   S.players.forEach(function(p){
